@@ -169,7 +169,8 @@ void acquisition::Capture::load_cameras() {
                     nh_pvt_.getParam("image_width", image_width);
                     nh_pvt_.getParam("distortion_model", distortion_model);
 
-                    ci_msg.header.frame_id = "cam_"+to_string(j)+"_optical_frame";
+                    //ci_msg.header.frame_id = "cam_"+to_string(j)+"_optical_frame";
+                    ci_msg.header.frame_id = "camera_link";
                     ci_msg.width = image_width;
                     ci_msg.height = image_height;
                     ci_msg.distortion_model = distortion_model;
@@ -509,7 +510,12 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                     else
                         cams[i].setEnumValue("PixelFormat", "Mono8");
                 cams[i].setEnumValue("AcquisitionMode", "Continuous");
-                
+               
+                cams[i].setFloatValue("AutoExposureGainLowerLimit", 10);
+                cams[i].setFloatValue("AutoExposureGainUpperLimit", 35);
+                cams[i].setEnumValue("GainAuto", "Continuous");
+
+                 
                 // set only master to be software triggered
                 if (cams[i].is_master()) { 
                     if (MAX_RATE_SAVE_){
@@ -537,6 +543,7 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                     cams[i].setEnumValue("TriggerOverlap", "ReadOut");//"Off"
                     cams[i].setEnumValue("TriggerActivation", "RisingEdge");
                 }
+
             }
         }
 
@@ -644,7 +651,8 @@ void acquisition::Capture::export_to_ROS() {
     img_msg_header.stamp = mesg.header.stamp;
 
     for (unsigned int i = 0; i < numCameras_; i++) {
-        img_msg_header.frame_id = "cam_"+to_string(i)+"_optical_frame";
+        //img_msg_header.frame_id = "cam_"+to_string(i)+"_optical_frame";
+        img_msg_header.frame_id = "camera_link";
 
         if(color_)
             img_msgs[i]=cv_bridge::CvImage(img_msg_header, "bgr8", frames_[i]).toImageMsg();

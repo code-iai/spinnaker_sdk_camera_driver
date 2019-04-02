@@ -512,7 +512,7 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                 cams[i].setEnumValue("AcquisitionMode", "Continuous");
                
                 cams[i].setFloatValue("AutoExposureGainLowerLimit", 10);
-                cams[i].setFloatValue("AutoExposureGainUpperLimit", 35);
+                cams[i].setFloatValue("AutoExposureGainUpperLimit", 40);
                 cams[i].setEnumValue("GainAuto", "Continuous");
 
                  
@@ -718,6 +718,7 @@ void acquisition::Capture::get_mat_images() {
     int frameID;
     int fid_mismatch = 0;
    
+    //ROS_INFO_STREAM("numCameras: " << numCameras_);
 
     for (int i=0; i<numCameras_; i++) {
 
@@ -769,6 +770,8 @@ void acquisition::Capture::run_soft_trig() {
         else
             save_mat_frames(0);
     }
+
+    ROS_INFO_STREAM("ros_rate: " << soft_framerate_);
 
     ros::Rate ros_rate(soft_framerate_);
     
